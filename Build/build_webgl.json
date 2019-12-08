@@ -1,6 +1,6 @@
 {
-"companyName": "DefaultCompany",
-"productName": "MyFirstGame",
+"companyName": " ",
+"productName": "glasses_shader",
 "dataUrl": "build_webgl.data.unityweb",
 "wasmCodeUrl": "build_webgl.wasm.code.unityweb",
 "wasmFrameworkUrl": "build_webgl.wasm.framework.unityweb",
