@@ -107,7 +107,7 @@ Shader "Custom/lense"
 						distortion	= distortion/(1.0+1.0/FoV);
 					//カメラ空間での法線ベクトル方向にズラしてテクセルを拾う
 					float4	refract_texel	= tex2Dproj(_GrabTexture, float4( i.pos.xyz + normal_c*distortion, i.pos.w ) );
-					//float4	refract_texel	= tex2Dproj(_GrabTexture, float4( i.pos.xyz - 3.0*normal_c*distortion, i.pos.w ) );	//unityのwebglビルドの場合　unityのバグなのか上記だとうまく行かない　OpenGLとDirectXの空間表現の違いからくるものかも？
+					//float4	refract_texel	= tex2Dproj(_GrabTexture, float4( i.pos.xyz - 2.0*normal_c*distortion, i.pos.w ) );	//unityのwebglビルドの場合　unityのバグなのか上記だとうまく行かない　OpenGLとDirectXの空間表現の違いからくるものかも？
 					
 					//反射
 					float4	reflect_texel	= UNITY_SAMPLE_TEXCUBE( unity_SpecCube0, reflect(-view,normal) );
