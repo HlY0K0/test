@@ -101,13 +101,16 @@ Shader "Custom/lense"
 					//屈折
 					//レンズの度と、ビューベクトルとレンズの向きの違い（カメラ空間での法線のZ値）から像の歪みを決定
 					//レンズ正面～斜めから見ると収縮、レンズ真横から見ると若干拡大　になる感じで調整(現実の光学現象とは違う)
-					float	distortion	= -_Diopter*(-0.5+normal_c.z);
+					float	distortion	= _Diopter*(0.5-normal_c.z);
 						//FoVによって効果量が変わってしまうので対策
-						float	FoV	= atan(UNITY_MATRIX_P[1][1])*2.0/3.1416;
+						#if	SHADER_API_GLES || SHADER_API_GLES3 || SHADER_API_GLCORE	//UnityのOpenGL系への変換が中途半端なようなので対策が必要　ちょっとここどういうふうに分岐させればいいのかUnityの仕様詳しくないんでわからない…
+							float	FoV	= -atan(UNITY_MATRIX_P[1][1])*2.0/3.141592653589793;	//こういうとこ規格統一して＞＜　右手左手…正規化デバイス空間…
+						#else
+							float	FoV	= atan(UNITY_MATRIX_P[1][1])*2.0/3.141592653589793;	//FoVを0～1で保持
+						#endif
 						distortion	= distortion/(1.0+1.0/FoV);
 					//カメラ空間での法線ベクトル方向にズラしてテクセルを拾う
-					float4	refract_texel	= tex2Dproj(_GrabTexture, float4( i.pos.xyz + normal_c*distortion, i.pos.w ) );
-					//float4	refract_texel	= tex2Dproj(_GrabTexture, float4( i.pos.xyz - 2.0*normal_c*distortion, i.pos.w ) );	//unityのwebglビルドの場合　unityのバグなのか上記だとうまく行かない　OpenGLとDirectXの空間表現の違いからくるものかも？
+					float4	refract_texel	= tex2Dproj(_GrabTexture, float4( i.pos.xy + normal_c.xy*distortion, i.pos.zw ) );
 					
 					//反射
 					float4	reflect_texel	= UNITY_SAMPLE_TEXCUBE( unity_SpecCube0, reflect(-view,normal) );
